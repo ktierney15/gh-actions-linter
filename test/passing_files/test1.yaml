@@ -1,0 +1,16 @@
+name: Test 1
+on:
+  workflow_dispatch:
+    inputs:
+      test1: 
+        required: false
+        default: none
+      test2:
+        required: false
+        default: none
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
