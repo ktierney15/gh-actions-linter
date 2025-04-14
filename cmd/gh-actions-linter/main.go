@@ -17,13 +17,11 @@ func main() {
 
 	fileName := args[0]
 
-	// err := lint.Run(fileName)
-	lint.Run(fileName)
-
-	// if err != nil {
-	// 	fmt.Println("Error Linting File:", err)
-	// 	os.Exit(1)
-	// }
+	err := lint.Run(fileName)
+	if err != nil {
+		fmt.Println("❌❌ Error Linting File:", err)
+		os.Exit(1)
+	}
 
 	fmt.Println(fileName, "Linted Sucessfully")
 
