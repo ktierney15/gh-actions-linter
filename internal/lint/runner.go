@@ -25,11 +25,19 @@ func Run(fileName string) error {
 
 	// initialize rules and run them against the yaml
 	rules := InitializeRules()
+	fmt.Println("----------------------------------------------------------------------")
+
 	for _, rule := range rules {
-        if !rule.Check(parsedYaml) {
-            fmt.Println("❌ Rule failed:", rule.Description)
-        }
-    }
+		passed, message := rule.Check(parsedYaml)
+		if !passed {
+			emoji := "❌" // fallback
+			if val, ok := SeverityMap[rule.Severity]; ok {
+				emoji = val.Emoji
+			}
+			fmt.Printf("%s [%s] %s\n   ↳ %s\n", emoji, rule.Severity, rule.Name, message)
+			fmt.Println("----------------------------------------------------------------------")
+		}
+	}
 	
     return nil // if no errors
 }
