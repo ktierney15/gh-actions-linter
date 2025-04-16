@@ -10,7 +10,12 @@ on:
         default: none
 
 jobs:
-  Test:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+  testing-one:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

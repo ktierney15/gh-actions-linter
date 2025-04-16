@@ -17,7 +17,9 @@ func Run(fileName string) error {
 	// parse yaml file into a map
 	parsedYaml := make(map[string]interface{})
     err = yaml.Unmarshal(data, &parsedYaml)
+	
     if err != nil {
+		// fmt.Println(err)
         return fmt.Errorf("error parsing YAML file %s: %v", fileName, err)
     }
 
