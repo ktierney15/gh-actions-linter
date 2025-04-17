@@ -25,11 +25,27 @@ func Run(fileName string) error {
 
 	// initialize rules and run them against the yaml
 	rules := InitializeRules()
+	totalWeight := 0
+	failedWeightSum := 0
+
+	fmt.Println("----------------------------------------------------------------------")
+
 	for _, rule := range rules {
-        if !rule.Check(parsedYaml) {
-            fmt.Println("❌ Rule failed:", rule.Description)
-        }
-    }
+		passed, message := rule.Check(parsedYaml)
+		severityInfo := SeverityMap[rule.Severity]
+		totalWeight += severityInfo.Weight
+
+		if !passed {
+			failedWeightSum += severityInfo.Weight
+
+			fmt.Printf("%s [%s] %s\n   ↳ %s\n", severityInfo.Emoji , rule.Severity, rule.Name, message)
+			fmt.Println("----------------------------------------------------------------------")
+		}
+	}
+
+	// calculate and print score
+	score := float64(totalWeight - failedWeightSum) / float64(totalWeight) * 100
+	fmt.Printf("\n🏁 Lint Score: %.2f%% 🏁 \n\n", score)
 	
     return nil // if no errors
 }
