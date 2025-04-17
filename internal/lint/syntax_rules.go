@@ -88,3 +88,25 @@ func ValidJobNames(data map[string]interface{}) (bool, string) {
 
 	return jobNamesValid, strings.TrimSuffix(failureOutputMessage, ", ")
 }
+
+// func UniqueJobName(data map[string]interface{}) (bool, string) {
+// 	// checks if any jobs have the same name THIS FUNCTION IS NOT NEEDED BECAUSE THE YAML CANT BE PARSED IF ITS TRUE
+// 	jobNamesValid := true
+// 	failureOutputMessage := ""
+// 	jobSet := make(map[string]bool)
+
+// 	jobField, ok := data["jobs"].(map[string]interface{})
+// 	if !ok {
+// 		return false, "Missing 'jobs' field"
+// 	}
+
+// 	for job := range jobField {
+// 		if jobSet[job] {
+// 			jobNamesValid = false
+// 			failureOutputMessage += fmt.Sprintf("multiple jobs named '%s', ", job)
+// 		}
+// 		jobSet[job] = true
+// 	}
+
+// 	return jobNamesValid, strings.TrimSuffix(failureOutputMessage, ", ")
+// }
