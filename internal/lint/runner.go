@@ -43,6 +43,7 @@ func Run(fileName string) error {
 		}
 	}
 
+	// calculate and print score
 	score := float64(totalWeight - failedWeightSum) / float64(totalWeight) * 100
 	fmt.Printf("\n🏁 Lint Score: %.2f%% 🏁 \n\n", score)
 	

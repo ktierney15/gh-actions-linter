@@ -9,6 +9,7 @@ import (
 
 // Check for required fields
 func NameFieldPresent(data map[string]interface{}) (bool, string) {
+	// checks if name field is present
     _, exists := data["name"]
 	if !exists {
 		return false, "Missing 'name' field"	
@@ -17,6 +18,7 @@ func NameFieldPresent(data map[string]interface{}) (bool, string) {
 }
 
 func OnFieldPresent(data map[string]interface{}) (bool, string) {
+	// checks if on field is present
 	_, exists := data["on"]
 	if !exists {
 		return false, "Missing 'on' Field"
@@ -25,6 +27,7 @@ func OnFieldPresent(data map[string]interface{}) (bool, string) {
 }
 
 func JobsFieldPresent(data map[string]interface{}) (bool, string) {
+	// checks if job feild is present
     _, exists := data["jobs"]
     if !exists {
         return false, "Missing 'jobs' field"
@@ -34,6 +37,7 @@ func JobsFieldPresent(data map[string]interface{}) (bool, string) {
 
 // workflow trigger syntax
 func ValidWorkflowTrigger(data map[string]interface{}) (bool, string) {
+	// checks if all workflow triggers are valid
 	validTriggers := map[string]bool{
 		"push":               true,
 		"pull_request":       true,
