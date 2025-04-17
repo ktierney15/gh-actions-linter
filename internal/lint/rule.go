@@ -39,13 +39,12 @@ func InitializeRules() []Rule {
 			Category:	 "syntax",
             Check:       ValidWorkflowTrigger,
 		},
-		// {
-		// 	Name:        "ValidJobNames",
-        //     Description: "Check if job names follow the following rules: kebab-case, lowercase letters, numbers, dashes, underscores",
-		// 	Weight: 	 2,
-		// 	Severity:	 "low",
-		// 	Category:	 "style",
-        //     Check:       ValidJobNames,
-		// },
+		{
+			Name:        "ValidJobNames",
+            Description: "Check if job names follow the following rules: kebab-case, lowercase letters, numbers, dashes, underscores",
+			Severity:	 "low",
+			Category:	 "style",
+            Check:       ValidJobNames,
+		},
     }
 }

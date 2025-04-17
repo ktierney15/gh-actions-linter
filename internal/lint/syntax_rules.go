@@ -4,7 +4,7 @@ package lint
 import (
 	"fmt"
 	"strings"
-// 	"regexp"
+	"regexp"
 )
 
 // Check for required fields
@@ -50,7 +50,7 @@ func ValidWorkflowTrigger(data map[string]interface{}) (bool, string) {
 
 	onField, ok := data["on"].(map[string]interface{})
 	if !ok {
-		return false, "missing 'on' field"
+		return false, "Missing 'on' field"
 	}
 
 	for event := range onField {
@@ -64,22 +64,23 @@ func ValidWorkflowTrigger(data map[string]interface{}) (bool, string) {
 
 
 // job syntax
-// func ValidJobNames(data map[string]interface{}) bool {
-// 	validJobRegex := regexp.MustCompile(`^[a-z0-9\-_]+$`) // kebab-case, lowercase letters, numbers, dashes, underscores
-// 	jobNamesValid := true
+func ValidJobNames(data map[string]interface{}) (bool, string) {
+	// Checks if all job names are kebab-case, lowercase letters, numbers, dashes, underscores
+	validJobRegex := regexp.MustCompile(`^[a-z0-9\-_]+$`) 
+	jobNamesValid := true
+	failureOutputMessage := ""
 
-// 	jobField, ok := data["jobs"].(map[string]interface{})
-// 	if !ok {
-// 		fmt.Printf("not ok")
-// 		return false
-// 	}
+	jobField, ok := data["jobs"].(map[string]interface{})
+	if !ok {
+		return false, "Missing 'jobs' field"
+	}
 
-// 	for job := range jobField {
-// 		if !validJobRegex.MatchString(job) {
-// 			fmt.Printf("🔔Style warning: job name '%s' should be lowercase kebab-case \n", job)
-// 			jobNamesValid = false
-// 		}
-// 	}
+	for job := range jobField {
+		if !validJobRegex.MatchString(job) {
+			jobNamesValid = false
+			failureOutputMessage += fmt.Sprintf("job name '%s' should be lowercase kebab-case, ", job)
+		}
+	}
 
-// 	return jobNamesValid
-// }
+	return jobNamesValid, strings.TrimSuffix(failureOutputMessage, ", ")
+}
