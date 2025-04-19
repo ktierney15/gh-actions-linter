@@ -55,4 +55,3 @@ func InitializeRules() []Rule {
 		},
     }
 }
-
