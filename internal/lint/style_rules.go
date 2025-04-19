@@ -1,4 +1,12 @@
 // rule functions of the style type. These rules are generally lower severity and more for best practice
+package lint
+
+import (
+	"fmt"
+	"strings"
+	"regexp"
+)
+
 func ValidJobNames(data map[string]interface{}) (bool, string) {
 	// Checks if all job names are kebab-case, lowercase letters, numbers, dashes, underscores
 	validJobRegex := regexp.MustCompile(`^[a-z0-9\-_]+$`) 

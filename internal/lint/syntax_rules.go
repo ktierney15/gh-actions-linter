@@ -4,7 +4,6 @@ package lint
 import (
 	"fmt"
 	"strings"
-	"regexp"
 )
 
 // Check for required fields
