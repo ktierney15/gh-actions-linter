@@ -46,5 +46,12 @@ func InitializeRules() []Rule {
 			Category:	 "style",
             Check:       ValidJobNames,
 		},
+		{
+			Name:        "EachStepHasName",
+            Description: "Check if all steps have a name",
+			Severity:	 "low",
+			Category:	 "style",
+            Check:       EachStepHasName,
+		},
     }
 }

@@ -110,3 +110,31 @@ func ValidJobNames(data map[string]interface{}) (bool, string) {
 
 // 	return jobNamesValid, strings.TrimSuffix(failureOutputMessage, ", ")
 // }
+
+func EachStepHasName(data map[string]interface{}) (bool, string) {
+	// checks if each step has a name
+	eachStepHasName := true
+	failureOutputMessage := ""
+
+	jobField, ok := data["jobs"].(map[string]interface{})
+	if !ok {
+		return false, "Missing 'jobs' field"
+	}
+
+	for jobName, jobValue := range jobField {
+		jobMap:= jobValue.(map[string]interface{})
+		steps:= jobMap["steps"].([]interface{})
+
+		for i, step := range steps {
+			stepMap := step.(map[string]interface{})
+
+			name, hasName := stepMap["name"]
+			if !hasName || name == "" {
+				eachStepHasName = false
+				failureOutputMessage += fmt.Sprintf("Step %d in job %s does not have a name, ", i+1, jobName)
+			}
+		}
+	}
+
+	return eachStepHasName, strings.TrimSuffix(failureOutputMessage, ", ")
+}
