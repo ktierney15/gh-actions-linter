@@ -4,7 +4,6 @@ package lint
 import (
 	"fmt"
 	"strings"
-	"regexp"
 )
 
 // Check for required fields
@@ -66,47 +65,40 @@ func ValidWorkflowTrigger(data map[string]interface{}) (bool, string) {
     return workflowTriggersValid, strings.TrimSuffix(failureOutputMessage, ", ") 
 }
 
-
-// job syntax
-func ValidJobNames(data map[string]interface{}) (bool, string) {
-	// Checks if all job names are kebab-case, lowercase letters, numbers, dashes, underscores
-	validJobRegex := regexp.MustCompile(`^[a-z0-9\-_]+$`) 
-	jobNamesValid := true
+func ValidJobStructure(data map[string]interface{}) (bool, string) {
+	// checks if the job has runs-on and steps
+	jobsAreValid := true
 	failureOutputMessage := ""
 
-	jobField, ok := data["jobs"].(map[string]interface{})
+	jobsField, ok := data["jobs"].(map[string]interface{})
 	if !ok {
 		return false, "Missing 'jobs' field"
 	}
 
-	for job := range jobField {
-		if !validJobRegex.MatchString(job) {
-			jobNamesValid = false
-			failureOutputMessage += fmt.Sprintf("job name '%s' should be lowercase kebab-case, ", job)
+	for jobName, jobValue := range jobsField {
+		jobMap, ok := jobValue.(map[string]interface{})
+		if !ok {
+			jobsAreValid = false
+			failureOutputMessage += fmt.Sprintf("Job '%s' is not a valid yaml object, ", jobName)
+		}
+
+		if _, exists := jobMap["runs-on"]; ! exists {
+			jobsAreValid = false
+			failureOutputMessage += fmt.Sprintf("Job '%s' is missing a runs-on value, ", jobName)
+		}
+
+		steps, stepsExists := jobMap["steps"]
+		if !stepsExists {
+			jobsAreValid = false
+			failureOutputMessage += fmt.Sprintf("Job '%s' is missing steps value, ", jobName)
+		} else {
+			stepList, ok := steps.([]interface{})
+			if !ok || len(stepList) == 0 {
+				jobsAreValid = false
+				failureOutputMessage += fmt.Sprintf("Job '%s' is missing steps, ", jobName)
+			}
 		}
 	}
 
-	return jobNamesValid, strings.TrimSuffix(failureOutputMessage, ", ")
+	return jobsAreValid, strings.TrimSuffix(failureOutputMessage, ", ") 
 }
-
-// func UniqueJobName(data map[string]interface{}) (bool, string) {
-// 	// checks if any jobs have the same name THIS FUNCTION IS NOT NEEDED BECAUSE THE YAML CANT BE PARSED IF ITS TRUE
-// 	jobNamesValid := true
-// 	failureOutputMessage := ""
-// 	jobSet := make(map[string]bool)
-
-// 	jobField, ok := data["jobs"].(map[string]interface{})
-// 	if !ok {
-// 		return false, "Missing 'jobs' field"
-// 	}
-
-// 	for job := range jobField {
-// 		if jobSet[job] {
-// 			jobNamesValid = false
-// 			failureOutputMessage += fmt.Sprintf("multiple jobs named '%s', ", job)
-// 		}
-// 		jobSet[job] = true
-// 	}
-
-// 	return jobNamesValid, strings.TrimSuffix(failureOutputMessage, ", ")
-// }
