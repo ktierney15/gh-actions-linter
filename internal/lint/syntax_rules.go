@@ -64,3 +64,41 @@ func ValidWorkflowTrigger(data map[string]interface{}) (bool, string) {
 	}
     return workflowTriggersValid, strings.TrimSuffix(failureOutputMessage, ", ") 
 }
+
+func ValidJobStructure(data map[string]interface{}) (bool, string) {
+	// checks if the job has runs-on and steps
+	jobsAreValid := true
+	failureOutputMessage := ""
+
+	jobsField, ok := data["jobs"].(map[string]interface{})
+	if !ok {
+		return false, "Missing 'jobs' field"
+	}
+
+	for jobName, jobValue := range jobsField {
+		jobMap, ok := jobValue.(map[string]interface{})
+		if !ok {
+			jobsAreValid = false
+			failureOutputMessage += fmt.Sprintf("Job '%s' is not a valid yaml object, ", jobName)
+		}
+
+		if _, exists := jobMap["runs-on"]; ! exists {
+			jobsAreValid = false
+			failureOutputMessage += fmt.Sprintf("Job '%s' is missing a runs-on value, ", jobName)
+		}
+
+		steps, stepsExists := jobMap["steps"]
+		if !stepsExists {
+			jobsAreValid = false
+			failureOutputMessage += fmt.Sprintf("Job '%s' is missing steps value, ", jobName)
+		} else {
+			stepList, ok := steps.([]interface{})
+			if !ok || len(stepList) == 0 {
+				jobsAreValid = false
+				failureOutputMessage += fmt.Sprintf("Job '%s' is missing steps, ", jobName)
+			}
+		}
+	}
+
+	return jobsAreValid, strings.TrimSuffix(failureOutputMessage, ", ") 
+}

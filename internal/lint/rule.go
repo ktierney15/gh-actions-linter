@@ -40,6 +40,13 @@ func InitializeRules() []Rule {
             Check:       ValidWorkflowTrigger,
 		},
 		{
+			Name:        "ValidJobStructure",
+            Description: "Checks if the job has runs-on and steps",
+			Severity:	 "critical",
+			Category:	 "syntax",
+            Check:       ValidJobStructure,
+		},
+		{
 			Name:        "ValidJobNames",
             Description: "Check if job names follow the following rules: kebab-case, lowercase letters, numbers, dashes, underscores",
 			Severity:	 "low",

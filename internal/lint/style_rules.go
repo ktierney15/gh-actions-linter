@@ -61,16 +61,25 @@ func EachStepHasName(data map[string]interface{}) (bool, string) {
 	}
 
 	for jobName, jobValue := range jobField {
-		jobMap:= jobValue.(map[string]interface{})
-		steps:= jobMap["steps"].([]interface{})
-
-		for i, step := range steps {
-			stepMap := step.(map[string]interface{})
-
-			name, hasName := stepMap["name"]
-			if !hasName || name == "" {
-				eachStepHasName = false
-				failureOutputMessage += fmt.Sprintf("Step %d in job %s does not have a name, ", i+1, jobName)
+		jobMap , ok:= jobValue.(map[string]interface{})
+		if !ok {
+			eachStepHasName = false
+			failureOutputMessage += fmt.Sprintf("Job '%s' is not a valid yaml object, ", jobName)
+		}
+		
+		steps, ok := jobMap["steps"].([]interface{})
+		if !ok {
+			eachStepHasName = false
+			failureOutputMessage += fmt.Sprintf("Job %s does not have steps, ", jobName)
+		} else {
+			for i, step := range steps {
+				stepMap := step.(map[string]interface{})
+	
+				name, hasName := stepMap["name"]
+				if !hasName || name == "" {
+					eachStepHasName = false
+					failureOutputMessage += fmt.Sprintf("Step %d in job %s does not have a name, ", i+1, jobName)
+				}
 			}
 		}
 	}
