@@ -47,6 +47,13 @@ func InitializeRules() []Rule {
             Check:       ValidJobStructure,
 		},
 		{
+			Name:        "UsingActionVersion",
+            Description: "Checks if any actions are pointing to a branch or latest",
+			Severity:	 "medium",
+			Category:	 "style",
+            Check:       UsingActionVersion,
+		},
+		{
 			Name:        "ValidJobNames",
             Description: "Check if job names follow the following rules: kebab-case, lowercase letters, numbers, dashes, underscores",
 			Severity:	 "low",

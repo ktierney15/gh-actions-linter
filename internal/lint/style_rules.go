@@ -86,3 +86,45 @@ func EachStepHasName(data map[string]interface{}) (bool, string) {
 
 	return eachStepHasName, strings.TrimSuffix(failureOutputMessage, ", ")
 }
+
+func UsingActionVersion(data map[string]interface{}) (bool, string) {
+	// checks if any actions are pointing to a branch or latest
+	isUsingOnlyVersions := true
+	failureOutputMessage := ""
+
+	jobField, ok := data["jobs"].(map[string]interface{})
+	if !ok {
+		// pass because there are no 'uses' if there is nothing in the job
+	}
+
+	for jobName, jobValue := range jobField {
+		jobMap , ok:= jobValue.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		steps, ok := jobMap["steps"].([]interface{})
+		if !ok {
+			// pass because there are no 'uses' if there is nothing in the steps
+			continue
+		} else {
+			for _, step := range steps {
+				stepMap, ok := step.(map[string]interface{})
+				if !ok {
+					continue
+				}
+				if usesVal, ok := stepMap["uses"].(string); ok {
+					if !strings.Contains(usesVal, "@") || strings.HasSuffix(usesVal, "@main") || strings.HasSuffix(usesVal, "@master") || strings.HasSuffix(usesVal, "@latest") {
+						isUsingOnlyVersions = false
+						failureOutputMessage += fmt.Sprintf("Step in job '%s' uses unversioned action: '%s', ", jobName, usesVal)
+					}
+				}
+			}
+		}
+
+	}
+
+
+
+	return isUsingOnlyVersions, strings.TrimSuffix(failureOutputMessage, ", ")
+}
