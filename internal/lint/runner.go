@@ -13,6 +13,16 @@ func Run(fileName string) error {
     if err != nil {
         return fmt.Errorf("error reading file %s: %v", fileName, err)
     }
+	const banner = `
+	 ██████╗ ██╗  ██╗ █████╗       ██╗    ██╗███╗   ██╗████████╗
+	██╔════╝ ██║  ██║██╔══██╗      ██║    ██║████╗  ██║╚══██╔══╝
+	██║  ███╗███████║███████║█████╗██║    ██║██╔██╗ ██║   ██║   
+	██║   ██║██╔══██║██╔══██║╚════╝██║    ██║██║╚██╗██║   ██║   
+	╚██████╔╝██║  ██║██║  ██║      ██████║██║██║ ╚████║   ██║   
+	 ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝      ╚═════╝╚═╝╚═╝  ╚═══╝   ╚═╝   
+
+GitHub Actions Linter ⚙️
+	`
 
 	// parse yaml file into a map
 	parsedYaml := make(map[string]interface{})
@@ -28,6 +38,8 @@ func Run(fileName string) error {
 	totalWeight := 0
 	failedWeightSum := 0
 
+	// fmt.Print("\033[2J") // clear screen
+	fmt.Println(banner)
 	fmt.Println("----------------------------------------------------------------------")
 
 	for _, rule := range rules {
