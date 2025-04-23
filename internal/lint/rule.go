@@ -6,7 +6,7 @@ type Rule struct {
     Description string
 	Severity 	string // "info", "warning", "critical"
 	Category 	string // "syntax", "performance", "security"
-    Check       func(map[string]interface{}) (bool, string)
+    Check       func(map[string]interface{}) (*bool, string)
 }
 
 func InitializeRules() []Rule {
@@ -45,6 +45,20 @@ func InitializeRules() []Rule {
 			Severity:	 "critical",
 			Category:	 "syntax",
             Check:       ValidJobStructure,
+		},
+		{
+			Name:        "ValidCron",
+            Description: "Checks if schedule has a cron and cron is valid",
+			Severity:	 "critical",
+			Category:	 "syntax",
+            Check:       ValidCron,
+		},
+		{
+			Name:        "NeedsJobExists",
+            Description: "Makes sure that if there is a 'needs' the job thats dependent on exists",
+			Severity:	 "critical",
+			Category:	 "syntax",
+            Check:       NeedsJobExists,
 		},
 		{
 			Name:        "UsingActionVersion",

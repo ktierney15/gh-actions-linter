@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 )
 
-func ValidJobNames(data map[string]interface{}) (bool, string) {
+func ValidJobNames(data map[string]interface{}) (*bool, string) {
 	// Checks if all job names are kebab-case, lowercase letters, numbers, dashes, underscores
 	validJobRegex := regexp.MustCompile(`^[a-z0-9\-_]+$`) 
 	jobNamesValid := true
@@ -16,7 +16,8 @@ func ValidJobNames(data map[string]interface{}) (bool, string) {
 
 	jobField, ok := data["jobs"].(map[string]interface{})
 	if !ok {
-		return false, "Missing 'jobs' field"
+		jobNamesValid = false
+		return &jobNamesValid, "Missing 'jobs' field"
 	}
 
 	for job := range jobField {
@@ -26,17 +27,18 @@ func ValidJobNames(data map[string]interface{}) (bool, string) {
 		}
 	}
 
-	return jobNamesValid, strings.TrimSuffix(failureOutputMessage, ", ")
+	return &jobNamesValid, strings.TrimSuffix(failureOutputMessage, ", ")
 }
 
-func EachStepHasName(data map[string]interface{}) (bool, string) {
+func EachStepHasName(data map[string]interface{}) (*bool, string) {
 	// checks if each step has a name
 	eachStepHasName := true
 	failureOutputMessage := ""
 
 	jobField, ok := data["jobs"].(map[string]interface{})
 	if !ok {
-		return false, "Missing 'jobs' field"
+		eachStepHasName = false
+		return &eachStepHasName, "Missing 'jobs' field"
 	}
 
 	for jobName, jobValue := range jobField {
@@ -63,10 +65,10 @@ func EachStepHasName(data map[string]interface{}) (bool, string) {
 		}
 	}
 
-	return eachStepHasName, strings.TrimSuffix(failureOutputMessage, ", ")
+	return &eachStepHasName, strings.TrimSuffix(failureOutputMessage, ", ")
 }
 
-func UsingActionVersion(data map[string]interface{}) (bool, string) {
+func UsingActionVersion(data map[string]interface{}) (*bool, string) {
 	// checks if any actions are pointing to a branch or latest
 	isUsingOnlyVersions := true
 	failureOutputMessage := ""
@@ -105,11 +107,11 @@ func UsingActionVersion(data map[string]interface{}) (bool, string) {
 
 
 
-	return isUsingOnlyVersions, strings.TrimSuffix(failureOutputMessage, ", ")
+	return &isUsingOnlyVersions, strings.TrimSuffix(failureOutputMessage, ", ")
 }
 
 
-func RedundantSteps(data map[string]interface{}) (bool, string) {
+func RedundantSteps(data map[string]interface{}) (*bool, string) {
 	// checks if there are any duplicate steps in a job
 	noRedundantSteps := true
 	failureOutputMessage := ""
@@ -151,5 +153,5 @@ func RedundantSteps(data map[string]interface{}) (bool, string) {
 		}
 	}
 
-	return noRedundantSteps, strings.TrimSuffix(failureOutputMessage, ", ")
+	return &noRedundantSteps, strings.TrimSuffix(failureOutputMessage, ", ")
 }
