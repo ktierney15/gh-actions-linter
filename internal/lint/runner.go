@@ -45,9 +45,13 @@ GitHub Actions Linter ⚙️
 	for _, rule := range rules {
 		passed, message := rule.Check(parsedYaml)
 		severityInfo := SeverityMap[rule.Severity]
+		if passed == nil {
+			continue	
+		}
+		
 		totalWeight += severityInfo.Weight
 
-		if !passed {
+		if !*passed {
 			failedWeightSum += severityInfo.Weight
 
 			fmt.Printf("%s [%s] %s\n   ↳ %s\n", severityInfo.Emoji , rule.Severity, rule.Name, message)

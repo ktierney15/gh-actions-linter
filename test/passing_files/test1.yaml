@@ -9,6 +9,9 @@ on:
         required: false
         default: none
   # bleh: 
+  # schedule:
+  #   - cron: "* * * * *"
+    # - cron: "* *"
 
 jobs:
   test:

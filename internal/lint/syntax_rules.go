@@ -4,38 +4,49 @@ package lint
 import (
 	"fmt"
 	"strings"
+	"github.com/gorhill/cronexpr"
 )
 
 // Check for required fields
-func NameFieldPresent(data map[string]interface{}) (bool, string) {
+func NameFieldPresent(data map[string]interface{}) (*bool, string) {
 	// checks if name field is present
-    _, exists := data["name"]
+	result := true
+	errorMsg := ""
+	_, exists := data["name"]
+
 	if !exists {
-		return false, "Missing 'name' field"	
+		result = false
+		errorMsg = "Missing 'name' field"	
 	}
-    return true, ""
+    return &result, errorMsg
 }
 
-func OnFieldPresent(data map[string]interface{}) (bool, string) {
+func OnFieldPresent(data map[string]interface{}) (*bool, string) {
 	// checks if on field is present
+	result := true
+	errorMsg := ""
 	_, exists := data["on"]
 	if !exists {
-		return false, "Missing 'on' Field"
+		result = false
+		errorMsg = "Missing 'on' Field"
 	}
-    return true, ""
+    return &result, errorMsg
 }
 
-func JobsFieldPresent(data map[string]interface{}) (bool, string) {
+func JobsFieldPresent(data map[string]interface{}) (*bool, string) {
 	// checks if job feild is present
+	result := true
+	errorMsg := ""
     _, exists := data["jobs"]
     if !exists {
-        return false, "Missing 'jobs' field"
+        result = false
+		errorMsg = "Missing 'jobs' field"
     }
-    return true, ""
+    return &result, errorMsg
 }
 
 // workflow trigger syntax
-func ValidWorkflowTrigger(data map[string]interface{}) (bool, string) {
+func ValidWorkflowTrigger(data map[string]interface{}) (*bool, string) {
 	// checks if all workflow triggers are valid
 	validTriggers := map[string]bool{
 		"push":               true,
@@ -53,7 +64,8 @@ func ValidWorkflowTrigger(data map[string]interface{}) (bool, string) {
 
 	onField, ok := data["on"].(map[string]interface{})
 	if !ok {
-		return false, "Missing 'on' field"
+		workflowTriggersValid = false
+		return &workflowTriggersValid, "Missing 'on' field"
 	}
 
 	for event := range onField {
@@ -62,17 +74,18 @@ func ValidWorkflowTrigger(data map[string]interface{}) (bool, string) {
 			failureOutputMessage += fmt.Sprintf("%s is not a valid workflow trigger, ", event)
 		}
 	}
-    return workflowTriggersValid, strings.TrimSuffix(failureOutputMessage, ", ") 
+    return &workflowTriggersValid, strings.TrimSuffix(failureOutputMessage, ", ") 
 }
 
-func ValidJobStructure(data map[string]interface{}) (bool, string) {
+func ValidJobStructure(data map[string]interface{}) (*bool, string) {
 	// checks if the job has runs-on and steps
 	jobsAreValid := true
 	failureOutputMessage := ""
 
 	jobsField, ok := data["jobs"].(map[string]interface{})
 	if !ok {
-		return false, "Missing 'jobs' field"
+		jobsAreValid = false	
+		return &jobsAreValid, "Missing 'jobs' field"
 	}
 
 	for jobName, jobValue := range jobsField {
@@ -100,5 +113,52 @@ func ValidJobStructure(data map[string]interface{}) (bool, string) {
 		}
 	}
 
-	return jobsAreValid, strings.TrimSuffix(failureOutputMessage, ", ") 
+	return &jobsAreValid, strings.TrimSuffix(failureOutputMessage, ", ") 
+}
+
+func ValidCron(data map[string]interface{}) (*bool, string) {
+	// checks if schedule has a cron and cron is valid
+	validCron := true
+	failureOutputMessage := ""
+
+	onField, ok := data["on"].(map[string]interface{})
+	if !ok {
+		validCron = false
+		return &validCron, "Missing 'on' field"
+	}
+
+	scheduleField, hasSchedule := onField["schedule"]
+	if !hasSchedule {
+		// No schedule present, rule does not apply
+		return nil, ""
+	}
+
+	scheduleList, ok := scheduleField.([]interface{})
+	if !ok {
+		validCron := false
+		return &validCron, "'schedule' field is not a valid list"
+	}
+
+	for _, scheduleItem := range scheduleList {
+		schedMap, ok := scheduleItem.(map[string]interface{})
+		if !ok {
+			result := false
+			return &result, "Invalid structure in 'schedule' list"
+		}
+
+		cronExpr, hasCron := schedMap["cron"].(string)
+		if !hasCron {
+			validCron = false
+			failureOutputMessage += "Missing 'cron' key in schedule, "
+			continue
+		}
+
+		_, err := cronexpr.Parse(cronExpr)
+		if err != nil {
+			validCron = false
+			failureOutputMessage += fmt.Sprintf("Invalid cron expression: %s, ", cronExpr)
+		}
+	}
+
+	return &validCron, strings.TrimSuffix(failureOutputMessage, ", ") 
 }
