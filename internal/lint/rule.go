@@ -61,6 +61,13 @@ func InitializeRules() []Rule {
             Check:       NeedsJobExists,
 		},
 		{
+			Name:        "HasRunsOrUses",
+            Description: "Checks if all steps have either 'runs' or uses'",
+			Severity:	 "critical",
+			Category:	 "syntax",
+            Check:       HasRunsOrUses,
+		},
+		{
 			Name:        "UsingActionVersion",
             Description: "Checks if any actions are pointing to a branch or latest",
 			Severity:	 "medium",
