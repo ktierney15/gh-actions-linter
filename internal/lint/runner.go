@@ -21,7 +21,7 @@ func Run(fileName string) error {
 	╚██████╔╝██║  ██║██║  ██║      ██████║██║██║ ╚████║   ██║   
 	 ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝      ╚═════╝╚═╝╚═╝  ╚═══╝   ╚═╝   
 
-GitHub Actions Linter ⚙️
+                       GitHub Actions Linter ⚙️
 	`
 
 	// parse yaml file into a map

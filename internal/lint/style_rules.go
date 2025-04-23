@@ -104,7 +104,5 @@ func UsingActionVersion(data map[string]interface{}) (*bool, string) {
 
 	}
 
-
-
 	return &isUsingOnlyVersions, strings.TrimSuffix(failureOutputMessage, ", ")
 }

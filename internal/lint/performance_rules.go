@@ -1,3 +1,4 @@
+// rules that deter slowing the performance of a pipeline
 package lint
 
 import (
@@ -50,3 +51,5 @@ func RedundantSteps(data map[string]interface{}) (*bool, string) {
 
 	return &noRedundantSteps, strings.TrimSuffix(failureOutputMessage, ", ")
 }
+
+
