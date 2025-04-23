@@ -213,5 +213,45 @@ func NeedsJobExists(data map[string]interface{}) (*bool, string) {
 
 	}
 
-	return &needsJobExists, failureOutputMessage
+	return &needsJobExists, strings.TrimSuffix(failureOutputMessage, ", ") 
+}
+
+func HasRunsOrUses(data map[string]interface{}) (*bool, string) {
+	// Checks if all steps have either 'runs' or uses'
+	hasRunsOrUses := true
+	failureOutputMessage := ""
+
+	jobsField, ok := data["jobs"].(map[string]interface{})
+	if !ok {
+		return nil, "Missing 'jobs' field"
+	}
+
+	for jobName, jobValue := range jobsField {
+		jobMap, ok := jobValue.(map[string]interface{})
+		if !ok {
+			continue
+			// return nil, fmt.Sprintf("Job '%s' field is not valid", jobName)
+		}
+		steps, ok := jobMap["steps"].([]interface{})
+		if !ok {
+			continue
+		}
+
+		for i, step := range steps {
+			stepMap, ok := step.(map[string]interface{})
+			if !ok {
+				continue
+			}
+
+			_, hasRun := stepMap["run"]
+			_, hasUses := stepMap["uses"]
+
+			if !hasRun && !hasUses {
+				hasRunsOrUses = false
+				failureOutputMessage += fmt.Sprintf("Step %d in job '%s' is missing both 'run' and 'uses', ", i+1, jobName)
+			}
+		}
+	}
+
+	return &hasRunsOrUses, strings.TrimSuffix(failureOutputMessage, ", ") 
 }
