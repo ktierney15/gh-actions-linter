@@ -54,6 +54,13 @@ func InitializeRules() []Rule {
             Check:       ValidCron,
 		},
 		{
+			Name:        "NeedsJobExists",
+            Description: "Makes sure that if there is a 'needs' the job thats dependent on exists",
+			Severity:	 "critical",
+			Category:	 "syntax",
+            Check:       NeedsJobExists,
+		},
+		{
 			Name:        "UsingActionVersion",
             Description: "Checks if any actions are pointing to a branch or latest",
 			Severity:	 "medium",

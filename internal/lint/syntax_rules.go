@@ -162,3 +162,56 @@ func ValidCron(data map[string]interface{}) (*bool, string) {
 
 	return &validCron, strings.TrimSuffix(failureOutputMessage, ", ") 
 }
+
+func NeedsJobExists(data map[string]interface{}) (*bool, string) {
+	// makes sure that if there is a 'needs' the job thats dependent on exists
+	needsJobExists := true
+	failureOutputMessage := ""
+
+	jobField, ok := data["jobs"].(map[string]interface{})
+	if !ok {
+		return nil, "Missing 'jobs' field"
+	}
+
+	jobNames := make(map[string]bool)
+	for jobName := range jobField {
+		jobNames[jobName] = true
+	}
+
+	for jobName, jobValue := range jobField {
+		jobMap , ok:= jobValue.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		needsValue, exists := jobMap["needs"]
+		if !exists {
+			continue
+		}
+
+		switch needs := needsValue.(type) {
+		case string:
+			if !jobNames[needs] {
+				needsJobExists = false
+				failureOutputMessage += fmt.Sprintf("Job '%s' depends on missing job '%s', ", jobName, needs)
+			}
+		case []interface{}:
+			for _, need := range needs {
+				needStr, ok := need.(string)
+				if !ok {
+					continue
+				}
+				if !jobNames[needStr] {
+					needsJobExists = false
+					failureOutputMessage += fmt.Sprintf("Job '%s' depends on missing job '%s', ", jobName, needStr)
+				}
+			}
+		default:
+			needsJobExists = false
+			failureOutputMessage += fmt.Sprintf("Job '%s' has an invalid 'needs' format, ", jobName)
+		}
+
+	}
+
+	return &needsJobExists, failureOutputMessage
+}

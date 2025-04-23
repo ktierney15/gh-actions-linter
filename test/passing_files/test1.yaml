@@ -23,9 +23,19 @@ jobs:
       - name: test-name
         run: |
           echo yes
+  
+  test2:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
 
   testing-one:
     runs-on: ubuntu-latest
+    needs: 
+      - test 
+      - test2
     steps:
       - name: checkout
         uses: actions/checkout@v3
