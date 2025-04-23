@@ -54,6 +54,13 @@ func InitializeRules() []Rule {
             Check:       UsingActionVersion,
 		},
 		{
+			Name:        "RedundantSteps",
+            Description: "Checks if there are any duplicate steps in a job",
+			Severity:	 "medium",
+			Category:	 "style",
+            Check:       RedundantSteps,
+		},
+		{
 			Name:        "ValidJobNames",
             Description: "Check if job names follow the following rules: kebab-case, lowercase letters, numbers, dashes, underscores",
 			Severity:	 "low",
