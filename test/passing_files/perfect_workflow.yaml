@@ -1,0 +1,43 @@
+name: Testing workflow - perfect workflow
+on:
+  workflow_dispatch:
+    inputs:
+      test1: 
+        required: false
+        default: none
+      test2:
+        required: false
+        default: none
+  schedule:
+    - cron: "* * * * *"
+  push: 
+    branches: ["main"]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@main
+
+      - name: echo yes
+        run: |
+          echo yes
+  
+  test2:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+  testing-one:
+    runs-on: ubuntu-latest
+    needs: 
+      - test 
+      - test2
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
