@@ -95,6 +95,13 @@ func InitializeRules() []Rule {
 			Category:	 "style",
             Check:       EachStepHasName,
 		},
+		{
+			Name:        "NoLongRunCommands",
+            Description: "Determines if a run command is too long (and should be put in a script)",
+			Severity:	 "low",
+			Category:	 "style",
+            Check:       NoLongRunCommands,
+		},
     }
 }
 

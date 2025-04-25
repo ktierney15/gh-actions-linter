@@ -106,3 +106,42 @@ func UsingActionVersion(data map[string]interface{}) (*bool, string) {
 
 	return &isUsingOnlyVersions, strings.TrimSuffix(failureOutputMessage, ", ")
 }
+
+func NoLongRunCommands(data map[string]interface{}) (*bool, string) {
+	// determines if a run command is too long (and should be put in a script)
+	noLongRunCommands := true
+	failureOutputMessage := ""
+
+	jobField, ok := data["jobs"].(map[string]interface{})
+	if !ok {
+		// pass because there are no 'uses' if there is nothing in the job
+	}
+
+
+	for jobName, jobValue := range jobField {
+		jobMap , ok:= jobValue.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		steps, ok := jobMap["steps"].([]interface{})
+		if !ok {
+			continue
+		} else {
+			for i, step := range steps {
+				stepMap, ok := step.(map[string]interface{})
+				if !ok {
+					continue
+				}
+				if runsVal, ok := stepMap["run"].(string); ok {
+					if len(runsVal) > 400 {
+						noLongRunCommands = false
+						failureOutputMessage += fmt.Sprintf("Step %d in job '%s' has a run command that is over 400 characters, ", i+1, jobName)
+					}
+				}
+			}
+		}
+	}
+
+	return &noLongRunCommands, strings.TrimSuffix(failureOutputMessage, ", ")
+}
