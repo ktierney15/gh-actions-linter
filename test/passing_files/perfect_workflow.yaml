@@ -2,10 +2,12 @@ name: Testing workflow - perfect workflow
 on:
   workflow_dispatch:
     inputs:
-      test1: 
+      test1:
+        description: testing value 
         required: false
         default: none
       test2:
+        description: testing value again
         required: false
         default: none
   schedule:
