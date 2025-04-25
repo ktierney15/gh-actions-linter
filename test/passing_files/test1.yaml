@@ -4,7 +4,6 @@ on:
     inputs:
       test1: 
         required: false
-        default: none
       test2:
         required: false
         default: none

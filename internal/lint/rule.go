@@ -102,6 +102,13 @@ func InitializeRules() []Rule {
 			Category:	 "style",
             Check:       NoLongRunCommands,
 		},
+		{
+			Name:        "InputsHaveDescriptions",
+            Description: "Checks to make sure input values have descriptions",
+			Severity:	 "low",
+			Category:	 "style",
+            Check:       InputsHaveDescriptions,
+		},
     }
 }
 

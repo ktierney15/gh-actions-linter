@@ -145,3 +145,43 @@ func NoLongRunCommands(data map[string]interface{}) (*bool, string) {
 
 	return &noLongRunCommands, strings.TrimSuffix(failureOutputMessage, ", ")
 }
+
+func InputsHaveDescriptions(data map[string]interface{}) (*bool, string) {
+	// checks to make sure input values have descriptions
+	inputsHaveDescriptions := true
+	failureOutputMessage := ""
+
+	onField, ok := data["on"].(map[string]interface{})
+	if !ok {
+		inputsHaveDescriptions = false
+		return &inputsHaveDescriptions, "Missing 'on' field"
+	}
+
+	dispatchField, hasDispatchField := onField["workflow_dispatch"]
+	if !hasDispatchField {
+		return nil, "No workflow_dispatch, skipping rule"
+	}
+
+	dispatchMap, ok := dispatchField.(map[string]interface{})
+	if !ok {
+		return nil, "no inputs, skipping rule"
+	}
+
+	inputs, ok := dispatchMap["inputs"].(map[string]interface{})
+	if !ok {
+		return nil, "no inputs, skipping rule"
+	}
+
+	for inputName, inputValue := range inputs {
+		inputMap, ok := inputValue.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if _, hasDescription := inputMap["description"]; !hasDescription {
+			inputsHaveDescriptions = false
+			failureOutputMessage += fmt.Sprintf("Input '%s' is missing a description, ", inputName)
+		}
+	}
+
+	return &inputsHaveDescriptions, strings.TrimSuffix(failureOutputMessage, ", ")
+}
