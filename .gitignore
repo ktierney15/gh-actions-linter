@@ -15,5 +15,3 @@ examples.txt
 /bin/
 /dist/
 /coverage.out
-
-go.sum
