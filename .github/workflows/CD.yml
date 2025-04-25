@@ -4,6 +4,9 @@ on:
   push:
     tags:
       - 'v*.*.*'
+permissions:
+  contents: write
+  id-token: write
 
 jobs:
   release:
@@ -24,3 +27,4 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: ${{ github.event.repository.name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
