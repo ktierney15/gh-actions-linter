@@ -37,3 +37,7 @@ jobs:
 
       - name: Run tests
         run: go test -v ./...
+
+     - name: echo
+       run: |
+        echo  ${{ github.repository }}
