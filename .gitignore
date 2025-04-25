@@ -1,2 +1,19 @@
 notes.txt
 examples.txt
+
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Output of build/test
+/build/
+/bin/
+/dist/
+/coverage.out
+
+go.sum
