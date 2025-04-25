@@ -39,4 +39,4 @@ jobs:
 
       - name: echo
         run: |
-          echo  ${{ github.repository }}
+          echo  ${{ github.event.repository.name }}
