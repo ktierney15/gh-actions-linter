@@ -1,10 +1,10 @@
 # cicd-linter
-Linting CLI tool for CI/CD
+Linting CLI tool for CI/CD. Pass your file into the linter and you will get a score and report.
 
 ## Usage
 #### Setup
 ```bash
-curl -L -o gh-actions-linter https://github.com/ktierney15/gh-actions-linter/releases/download/[version]/gh-actions-linter
+curl -L -o gh-actions-linter https://github.com/ktierney15/gh-actions-linter/releases/download/[version]/gh-actions-linter-[os]
 chmod +x gh-actions-linter
 ./gh-actions-linter
 
@@ -14,6 +14,5 @@ sudo mv gh-actions-linter /usr/local/bin/gh-actions-linter
 ```
 #### Start using
 ```bash
-gh-actions-linter --help
-
+gh-actions-linter [file name]
 ```
