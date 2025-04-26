@@ -1,5 +1,5 @@
 # cicd-linter
-Linting CLI tool for CI/CD. Pass your file into the linter and you will get a score and report.
+Linting CLI tool for Github Actions. Pass your YAML file into the linter and you will get a score and report.
 
 ## Usage
 #### Setup
